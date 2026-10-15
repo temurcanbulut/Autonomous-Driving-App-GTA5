@@ -2,9 +2,8 @@
 <p align="center">GTA V sahnelerini algıla. Kayıtları incele. Sürüş desteği kararlarını görünür kıl.</p>
 <p align="center"><a href="README.md">English</a> · <a href="docs/MODEL_CARD.md">Model kartı</a></p>
 
-![Gerçek replay arayüzünde kayıtlı algı kutuları ve kuru fren kararları](docs/images/replay.gif)
 
-Bu GIF, paketlenmiş yapay doğrulama dizilerinin gerçek JSONL kayıtlarını gösterir; doğal GTA oynanışı değildir. Proje; 19 sınıflı sahne algısı, nesne takibi ve çevrimdışı fren deneyleri içerir. Oyun tuşlarına basmaz.
+Proje; 19 sınıflı sahne algısı, nesne takibi ve çevrimdışı fren deneyleri içerir. Oyun tuşlarına basmaz.
 
 ## GPU olmadan dene
 
