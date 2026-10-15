@@ -7,10 +7,6 @@
 <p align="center">Explore scene perception and driving-assistance decisions in GTA V.<br>Trained models, replay tools and inspectable experiment records.</p>
 <p align="center"><a href="README.tr.md">Türkçe</a> · <a href="#try-it-without-a-gpu">Try the replay desk</a> · <a href="docs/MODEL_CARD.md">Model card</a> · <a href="docs/ROADMAP.md">Roadmap</a></p>
 
-![Replay desk: inspecting actual recorded actor components and dry-run brake decisions](docs/images/replay.gif)
-
-This is the real replay viewer reading the bundled **synthetic validation diagnostic**, not gameplay footage. Source records and known failures are retained. [Still image](docs/images/replay-desk.png).
-
 ## What you can explore
 
 - **19 scene classes.** Roads, sidewalks, signals, pedestrians, riders, bicycles and vehicles from trained semantic segmentation models.
