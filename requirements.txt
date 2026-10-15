@@ -1,0 +1,4 @@
+opencv-python>=4.10,<5
+numpy>=2,<3
+mss>=10,<11
+pillow>=11,<13

@@ -1,0 +1,40 @@
+"""Validation-only profiling of equivalent OpenCV worker configurations."""
+import json
+import sys
+import time
+from pathlib import Path
+import cv2
+import numpy as np
+import torch
+
+work=Path(__file__).resolve().parent
+sys.path.insert(0,str(work/'Autonomous-Driving-App-GTA5/Autonomous-Driving-App-GTA5'))
+from autonomy.perception import SemanticPerception,components
+torch.set_num_threads(2)
+data=work/'gta-expanded'
+rows=[r for r in json.loads((data/'manifest.json').read_text())['records'] if r.get('split')=='val' and 'excluded' not in r][:10]
+model=SemanticPerception(work/'gta-training/run-005/best.pt','cpu')
+masks=[]
+for row in rows:
+    frame=cv2.imread(str(data/row['image']))
+    result=model.infer(frame)
+    # Real predicted masks; deterministic synthetic per-pixel probabilities isolate CCL work.
+    confidence=np.full(result.mask.shape,.8,np.float32)
+    masks.append((result.mask,confidence))
+baseline=[components(*pair) for pair in masks]
+results=[]
+for threads in (32,1,2,4):
+    cv2.setNumThreads(threads)
+    for pair in masks:
+        components(*pair)
+    timings=[]
+    for repeat in range(3):
+        for index,pair in enumerate(masks):
+            start=time.perf_counter()
+            actual=components(*pair)
+            timings.append((time.perf_counter()-start)*1000)
+            assert actual==baseline[index],f'Component output mismatch at {threads} threads'
+    results.append(dict(opencv_threads=threads,p50_ms=float(np.median(timings)),p95_ms=float(np.percentile(timings,95)),outputs_exactly_equal=True))
+report=dict(scope='CPU semantic-component extraction only. Ten real teacher masks from validation, constant synthetic confidence 0.8, three repetitions after warmup. Concurrent final evaluation may affect timings; not complete pipeline latency.',image_ids=[r['id'] for r in rows],results=results)
+(work/'gta-training/component-profile.json').write_text(json.dumps(report,indent=2),encoding='utf-8')
+print(json.dumps(report,indent=2))

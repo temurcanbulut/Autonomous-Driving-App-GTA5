@@ -1,0 +1,42 @@
+"""Screen fixed partitions for visual near-duplicate candidates; no model use."""
+import concurrent.futures
+import json
+from pathlib import Path
+
+import cv2
+import numpy as np
+
+work=Path(__file__).resolve().parent
+data=work/'gta-expanded'
+rows=[r for r in json.loads((data/'manifest.json').read_text())['records'] if 'excluded' not in r]
+
+
+def fingerprint(row):
+    image=cv2.imread(str(data/row['image']),cv2.IMREAD_REDUCED_GRAYSCALE_8)
+    if image is None:
+        raise ValueError(row['id'])
+    small=cv2.resize(image,(32,32),interpolation=cv2.INTER_AREA).astype(np.float32)
+    low=cv2.dct(small)[:8,:8].flatten()
+    bits=low>np.median(low[1:])
+    bits[0]=False
+    packed=sum(int(b)<<i for i,b in enumerate(bits))
+    return np.uint64(packed)
+
+
+cv2.setNumThreads(1)
+with concurrent.futures.ThreadPoolExecutor(2) as pool:
+    hashes=np.array(list(pool.map(fingerprint,rows)),dtype=np.uint64)
+train=[i for i,r in enumerate(rows) if r['split']=='train']
+targets=[i for i,r in enumerate(rows) if r['split']!='train']
+train_hashes=hashes[train]
+matches=[]
+minimum={}
+for index in targets:
+    distance=np.bitwise_count(train_hashes ^ hashes[index])
+    nearest=int(np.argmin(distance))
+    minimum[rows[index]['id']]=dict(split=rows[index]['split'],distance=int(distance[nearest]),train_id=rows[train[nearest]]['id'])
+    for j in np.flatnonzero(distance<=4):
+        matches.append(dict(train_id=rows[train[j]]['id'],other_id=rows[index]['id'],other_split=rows[index]['split'],hamming_distance=int(distance[j])))
+result=dict(protocol='32px grayscale DCT perceptual hash, 63 usable bits, candidate threshold Hamming<=4',purpose='Visual similarity screening only, not proof of exact duplication or independent sessions. Fixed partitions and metrics are not filtered or changed using these candidates.',model_used=False,train_images=len(train),evaluation_images=len(targets),candidate_pairs=matches,nearest_training_image=minimum)
+(work/'gta-training/visual-similarity-audit.json').write_text(json.dumps(result,indent=2),encoding='utf-8')
+print(json.dumps(dict(train=len(train),evaluation=len(targets),candidate_pairs=len(matches),candidate_evaluation_images=len({m['other_id'] for m in matches}))))

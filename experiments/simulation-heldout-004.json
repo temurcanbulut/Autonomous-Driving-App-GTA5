@@ -1,0 +1,73 @@
+{
+  "protocol": "offline_oracle_state_longitudinal_v1",
+  "seed": 920000,
+  "cases": 10000,
+  "timestep_s": 0.02,
+  "horizon_s": 8,
+  "groups": {
+    "sidewalk_person": {
+      "cases": 1249,
+      "assist_collisions": 0,
+      "baseline_collisions": 0,
+      "reverse_events": 0,
+      "brake_seconds": 0.0
+    },
+    "clear_road": {
+      "cases": 1222,
+      "assist_collisions": 0,
+      "baseline_collisions": 0,
+      "reverse_events": 0,
+      "brake_seconds": 0.0
+    },
+    "near_stop": {
+      "cases": 1241,
+      "assist_collisions": 0,
+      "baseline_collisions": 0,
+      "reverse_events": 0,
+      "brake_seconds": 0.0
+    },
+    "stale_sensor": {
+      "cases": 1287,
+      "assist_collisions": 1268,
+      "baseline_collisions": 1268,
+      "reverse_events": 0,
+      "brake_seconds": 0.0
+    },
+    "stopped_vehicle": {
+      "cases": 1238,
+      "assist_collisions": 371,
+      "baseline_collisions": 1216,
+      "reverse_events": 0,
+      "brake_seconds": 1588.4400000000005
+    },
+    "vehicle_cut_in": {
+      "cases": 1278,
+      "assist_collisions": 176,
+      "baseline_collisions": 1052,
+      "reverse_events": 0,
+      "brake_seconds": 999.499999999999
+    },
+    "late_unavoidable": {
+      "cases": 1231,
+      "assist_collisions": 1203,
+      "baseline_collisions": 1204,
+      "reverse_events": 0,
+      "brake_seconds": 195.1599999999999
+    },
+    "pedestrian_crossing": {
+      "cases": 1254,
+      "assist_collisions": 358,
+      "baseline_collisions": 694,
+      "reverse_events": 0,
+      "brake_seconds": 657.2400000000029
+    }
+  },
+  "counterexamples": [],
+  "counterexample_count": 0,
+  "limitations": [
+    "Uses exact simulated obstacle geometry, not camera predictions.",
+    "Simplified flat-road dynamics; no GTA physics or keyboard actuation has been validated.",
+    "Late hazards and stale sensors may remain unavoidable; report all cohorts.",
+    "Collision counts are scenario results, not a real-world or game safety probability."
+  ]
+}

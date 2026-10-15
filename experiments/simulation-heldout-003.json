@@ -1,0 +1,73 @@
+{
+  "protocol": "offline_oracle_state_longitudinal_v1",
+  "seed": 910000,
+  "cases": 10000,
+  "timestep_s": 0.02,
+  "horizon_s": 8,
+  "groups": {
+    "pedestrian_crossing": {
+      "cases": 1192,
+      "assist_collisions": 301,
+      "baseline_collisions": 654,
+      "reverse_events": 0,
+      "brake_seconds": 616.7800000000018
+    },
+    "sidewalk_person": {
+      "cases": 1258,
+      "assist_collisions": 0,
+      "baseline_collisions": 0,
+      "reverse_events": 0,
+      "brake_seconds": 0.0
+    },
+    "late_unavoidable": {
+      "cases": 1344,
+      "assist_collisions": 1325,
+      "baseline_collisions": 1325,
+      "reverse_events": 0,
+      "brake_seconds": 215.96000000000015
+    },
+    "vehicle_cut_in": {
+      "cases": 1310,
+      "assist_collisions": 178,
+      "baseline_collisions": 1087,
+      "reverse_events": 0,
+      "brake_seconds": 1028.039999999999
+    },
+    "stopped_vehicle": {
+      "cases": 1202,
+      "assist_collisions": 365,
+      "baseline_collisions": 1179,
+      "reverse_events": 0,
+      "brake_seconds": 1541.2599999999986
+    },
+    "clear_road": {
+      "cases": 1247,
+      "assist_collisions": 0,
+      "baseline_collisions": 0,
+      "reverse_events": 0,
+      "brake_seconds": 0.0
+    },
+    "stale_sensor": {
+      "cases": 1241,
+      "assist_collisions": 1217,
+      "baseline_collisions": 1217,
+      "reverse_events": 0,
+      "brake_seconds": 0.0
+    },
+    "near_stop": {
+      "cases": 1206,
+      "assist_collisions": 0,
+      "baseline_collisions": 0,
+      "reverse_events": 0,
+      "brake_seconds": 0.0
+    }
+  },
+  "counterexamples": [],
+  "counterexample_count": 0,
+  "limitations": [
+    "Uses exact simulated obstacle geometry, not camera predictions.",
+    "Simplified flat-road dynamics; no GTA physics or keyboard actuation has been validated.",
+    "Late hazards and stale sensors may remain unavoidable; report all cohorts.",
+    "Collision counts are scenario results, not a real-world or game safety probability."
+  ]
+}

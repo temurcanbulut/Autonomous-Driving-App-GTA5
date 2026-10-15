@@ -1,0 +1,6 @@
+torch>=2.14.1,<2.15
+torchvision>=0.29.1,<0.30
+setuptools>=83
+pillow>=11,<13
+scipy>=1.14,<2
+requests>=2.32,<3

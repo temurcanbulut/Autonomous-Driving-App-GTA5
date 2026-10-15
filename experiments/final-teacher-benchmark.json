@@ -1,0 +1,69 @@
+{
+  "model_sha256": "b242f06cb943955170a24cf9b77ad7126c9721b65cfc85ea5ee4628dd708f3f0",
+  "manifest_sha256": "29a95012c05a83d17f5a530f2a6f7bdf31b6f3d7be2e6e0fe71e1a9ec753b13b",
+  "image_ids": [
+    "00052",
+    "00069",
+    "00232",
+    "00285",
+    "00311",
+    "00320",
+    "00370",
+    "00373",
+    "00409",
+    "00414",
+    "00416",
+    "00557",
+    "00568",
+    "00572",
+    "00601",
+    "00729",
+    "00733",
+    "00737",
+    "00797",
+    "00825",
+    "00855",
+    "01205",
+    "01210",
+    "01221",
+    "01235",
+    "01264",
+    "01267",
+    "01271",
+    "01276",
+    "01280"
+  ],
+  "split": "val",
+  "torch": "2.14.1+cu130",
+  "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU",
+  "results": [
+    {
+      "device": "cpu",
+      "autocast": false,
+      "frames": 30,
+      "total_p50_ms": 219.19630002230406,
+      "total_p95_ms": 293.00002996460535,
+      "model_and_mask_transfer_p50_ms": 195.21450001047924,
+      "throughput_from_mean_ms": 4.482739726019477
+    },
+    {
+      "device": "cuda",
+      "autocast": false,
+      "frames": 30,
+      "total_p50_ms": 29.12024996476248,
+      "total_p95_ms": 32.917549973353744,
+      "model_and_mask_transfer_p50_ms": 10.538399976212531,
+      "throughput_from_mean_ms": 34.17745574678186
+    },
+    {
+      "device": "cuda",
+      "autocast": true,
+      "frames": 30,
+      "total_p50_ms": 26.100600021891296,
+      "total_p95_ms": 31.382790004136037,
+      "model_and_mask_transfer_p50_ms": 9.379499999340624,
+      "throughput_from_mean_ms": 36.98179262745147
+    }
+  ],
+  "scope": "Batch-one perception including RGB conversion, preprocessing, GPU synchronization/transfer, mask probabilities, connected components. Five warm-up frames excluded. Decoded images are in memory; excludes screen capture, video decoding, preview and game rendering. Not a game FPS claim."
+}
