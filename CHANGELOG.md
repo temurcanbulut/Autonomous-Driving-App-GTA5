@@ -1,3 +1,10 @@
+# Changelog
+
+## Product workflows — 2026-10-15
+
+- Added a portable replay desk built from real JSONL, with source hashes, frame controls, geometry validation and explicit missing-input states.
+- Added a recorded GIF, Turkish quickstart, replay documentation and staged research roadmap.
+
 # Changes
 
 ## Research preview — 2026-10-15
