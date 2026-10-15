@@ -1,0 +1,7 @@
+{
+  "test_evaluated": false,
+  "checkpoint": "best.pt",
+  "completed_epochs": 1,
+  "status": "stopped_for_training_optimization",
+  "reason": "Continue from saved checkpoint after vectorized loss and memory layout benchmark."
+}

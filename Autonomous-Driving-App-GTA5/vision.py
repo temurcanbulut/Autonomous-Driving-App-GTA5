@@ -1,11 +1,11 @@
 """Configurable YOLOv3 perception demo for live screens and recorded video."""
 
 import argparse
-from dataclasses import dataclass
 import json
-from pathlib import Path
 import re
 import time
+from dataclasses import dataclass
+from pathlib import Path
 
 import cv2
 import numpy as np
@@ -41,14 +41,10 @@ def letterbox(frame, size):
     canvas[top : top + resized_height, left : left + resized_width] = cv2.resize(
         frame, (resized_width, resized_height)
     )
-    return canvas, Transform(
-        resized_width / width, resized_height / height, left, top, size
-    )
+    return canvas, Transform(resized_width / width, resized_height / height, left, top, size)
 
 
-def decode_detections(
-    outputs, frame_shape, transform, confidence, nms, class_count, allowed=None
-):
+def decode_detections(outputs, frame_shape, transform, confidence, nms, class_count, allowed=None):
     """Vectorized decoding followed by class-aware nonmaximum suppression."""
     height, width = frame_shape[:2]
     candidates = []
@@ -65,50 +61,34 @@ def decode_detections(
         if allowed is not None:
             keep &= np.isin(ids, list(allowed))
         rows, ids, scores = output[keep], ids[keep], scores[keep]
-        for row, class_id, score in zip(rows, ids, scores):
+        for row, class_id, score in zip(rows, ids, scores, strict=True):
             cx, cy, box_width, box_height = row[:4] * transform.size
             x1 = max(
                 0,
                 min(
                     width,
-                    int(
-                        np.floor(
-                            (cx - box_width / 2 - transform.left) / transform.scale_x
-                        )
-                    ),
+                    int(np.floor((cx - box_width / 2 - transform.left) / transform.scale_x)),
                 ),
             )
             y1 = max(
                 0,
                 min(
                     height,
-                    int(
-                        np.floor(
-                            (cy - box_height / 2 - transform.top) / transform.scale_y
-                        )
-                    ),
+                    int(np.floor((cy - box_height / 2 - transform.top) / transform.scale_y)),
                 ),
             )
             x2 = max(
                 0,
                 min(
                     width,
-                    int(
-                        np.ceil(
-                            (cx + box_width / 2 - transform.left) / transform.scale_x
-                        )
-                    ),
+                    int(np.ceil((cx + box_width / 2 - transform.left) / transform.scale_x)),
                 ),
             )
             y2 = max(
                 0,
                 min(
                     height,
-                    int(
-                        np.ceil(
-                            (cy + box_height / 2 - transform.top) / transform.scale_y
-                        )
-                    ),
+                    int(np.ceil((cy + box_height / 2 - transform.top) / transform.scale_y)),
                 ),
             )
             if x2 > x1 and y2 > y1:
@@ -124,9 +104,7 @@ def decode_detections(
             confidence,
             nms,
         )
-        detections.extend(
-            group[int(index)] for index in np.asarray(indices).reshape(-1)
-        )
+        detections.extend(group[int(index)] for index in np.asarray(indices).reshape(-1))
     return sorted(detections, key=lambda item: item.confidence, reverse=True)
 
 
@@ -159,15 +137,11 @@ class Detector:
             )
         }
         if counts != {len(self.names)}:
-            raise ValueError(
-                "The label file must match the class count in every YOLO head."
-            )
+            raise ValueError("The label file must match the class count in every YOLO head.")
         self.net = cv2.dnn.readNetFromDarknet(str(args.config), str(args.weights))
         if args.device == "cuda":
             if cv2.cuda.getCudaEnabledDeviceCount() < 1:
-                raise ValueError(
-                    "CUDA is unavailable in this OpenCV build. Use --device cpu."
-                )
+                raise ValueError("CUDA is unavailable in this OpenCV build. Use --device cpu.")
             self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
             self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
         else:
@@ -212,9 +186,7 @@ def frames(args):
                 region = dict(left=left, top=top, width=width, height=height)
             else:
                 if not 1 <= args.monitor < len(screen.monitors):
-                    raise ValueError(
-                        f"Monitor must be between 1 and {len(screen.monitors) - 1}."
-                    )
+                    raise ValueError(f"Monitor must be between 1 and {len(screen.monitors) - 1}.")
                 region = screen.monitors[args.monitor]
             while True:
                 yield cv2.cvtColor(np.asarray(screen.grab(region)), cv2.COLOR_BGRA2BGR)
@@ -254,9 +226,7 @@ def annotate(frame, detections, names, inference_ms, detector_ms):
         item, offset = nearest
         x, y, width, height = item.box
         center = (x + width // 2, y + height // 2)
-        cv2.line(
-            frame, (frame.shape[1] // 2, frame.shape[0] - 1), center, (141, 228, 209), 1
-        )
+        cv2.line(frame, (frame.shape[1] // 2, frame.shape[0] - 1), center, (141, 228, 209), 1)
         cv2.putText(
             frame,
             f"Screen offset: {offset:.0f} px",
@@ -304,9 +274,7 @@ def run(args):
                         (frame.shape[1], frame.shape[0]),
                     )
                     if not writer.isOpened():
-                        raise ValueError(
-                            "Output video could not be opened. Try an .avi file."
-                        )
+                        raise ValueError("Output video could not be opened. Try an .avi file.")
                 writer.write(frame)
             frame_count += 1
             if not args.headless:
@@ -358,9 +326,7 @@ def parser():
     )
     cli.add_argument("--source", default="screen", help="screen or a local video file")
     cli.add_argument("--monitor", type=int, default=1)
-    cli.add_argument(
-        "--region", nargs=4, type=int, metavar=("LEFT", "TOP", "WIDTH", "HEIGHT")
-    )
+    cli.add_argument("--region", nargs=4, type=int, metavar=("LEFT", "TOP", "WIDTH", "HEIGHT"))
     cli.add_argument("--weights", type=Path, default=BASE / "yolov3.weights")
     cli.add_argument("--config", type=Path, default=BASE / "yolov3.cfg")
     cli.add_argument("--names", type=Path, default=BASE / "coco.names")
@@ -370,12 +336,8 @@ def parser():
     cli.add_argument("--device", choices=("cpu", "cuda"), default="cpu")
     cli.add_argument("--all-classes", action="store_true")
     cli.add_argument("--headless", action="store_true")
-    cli.add_argument(
-        "--max-frames", type=int, default=0, help="0 processes until quit/end of file"
-    )
-    cli.add_argument(
-        "--output", type=Path, help="annotated .mp4 or .avi file (no audio)"
-    )
+    cli.add_argument("--max-frames", type=int, default=0, help="0 processes until quit/end of file")
+    cli.add_argument("--output", type=Path, help="annotated .mp4 or .avi file (no audio)")
     cli.add_argument(
         "--output-fps",
         type=float,

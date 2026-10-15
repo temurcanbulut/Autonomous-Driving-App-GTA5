@@ -1,0 +1,5 @@
+{
+  "defined_at_utc": "2026-10-15T16:18:28.730596+00:00",
+  "rule": "Prefer student only when validation score within 0.03, person recall within 0.03, rare-validation bicycle IoU within 0.05, car IoU at least 0.8 and CUDA FP32 p50 at most 20 ms; otherwise teacher. Test predictions never select models.",
+  "scope": "Research replay candidate selection only; not live-assistance approval."
+}

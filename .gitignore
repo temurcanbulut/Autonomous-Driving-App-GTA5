@@ -5,3 +5,9 @@ __pycache__/
 *.mp4
 *.avi
 metrics*.json
+*.pt
+*.onnx
+data/
+runs/
+.hypothesis/
+.ruff_cache/

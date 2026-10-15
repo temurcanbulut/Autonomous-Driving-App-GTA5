@@ -1,0 +1,104 @@
+"""Finish the current authorized evaluation after both candidates are frozen."""
+
+import hashlib
+import json
+import subprocess
+import sys
+import time
+from datetime import UTC, datetime
+from pathlib import Path
+
+work = Path(__file__).resolve().parent
+results = work/'gta-training'
+repo = work/'Autonomous-Driving-App-GTA5'
+data = work/'gta-expanded'
+state = results/'final-evaluation-status.json'
+policy_path = results/'final-evaluation-policy.json'
+if not policy_path.exists():
+    policy_path.write_text(json.dumps(dict(defined_at_utc=datetime.now(UTC).isoformat(),
+        rule='Prefer student only when validation score within 0.03, person recall within 0.03, rare-validation bicycle IoU within 0.05, car IoU at least 0.8 and CUDA FP32 p50 at most 20 ms; otherwise teacher. Test predictions never select models.',
+        scope='Research replay candidate selection only; not live-assistance approval.'),indent=2),encoding='utf-8')
+state.write_text(json.dumps(dict(status='waiting_for_frozen_candidates')),encoding='utf-8')
+deadline = time.monotonic()+10800
+while time.monotonic()<deadline:
+    try:
+        upstream = json.loads((results/'distillation-supervisor.json').read_text())
+    except (FileNotFoundError,json.JSONDecodeError):
+        upstream = {}
+    if upstream.get('status') == 'complete':
+        break
+    if upstream.get('status') in ('failed','upstream_timeout'):
+        raise SystemExit('Upstream failed; no test evaluation started')
+    time.sleep(5)
+else:
+    raise SystemExit('Candidate wait timed out')
+
+
+def command(script,arguments,label,output):
+    if output.exists():
+        return json.loads(output.read_text())
+    state.write_text(json.dumps(dict(status='evaluating',operation=label)),encoding='utf-8')
+    argv = [sys.executable,str(repo/'tools'/script),*map(str,arguments),'--output',str(output)]
+    with (results/f'{label}-console.txt').open('w',encoding='utf-8') as log:
+        result = subprocess.run(argv,cwd=work.parent,stdout=log,stderr=subprocess.STDOUT,creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
+    if result.returncode:
+        state.write_text(json.dumps(dict(status='failed',operation=label,returncode=result.returncode)),encoding='utf-8')
+        raise SystemExit(f'{label} failed')
+    return json.loads(output.read_text())
+
+
+models = dict(baseline=results/'run-002'/'best.pt',teacher=results/'run-005'/'best.pt',student=results/'run-006'/'best.pt')
+benchmarks = {}
+for name,model in models.items():
+    benchmarks[name] = command('benchmark_perception.py',['--data',data,'--manifest',data/'manifest.json','--model',model,'--split','val','--frames','30'],f'final-{name}-benchmark',results/f'final-{name}-benchmark.json')
+
+
+def validation(name):
+    run = models[name].parent
+    ordinary = json.loads((run/'best-validation.json').read_text())
+    rare = json.loads((run/'best-validation-challenge.json').read_text())
+    mapping = {c['name']:c for c in rare['classes']}
+    score = 0.4*ordinary['mean_iou']+0.6*sum(mapping[x]['iou'] or 0 for x in ('person','rider','car','motorcycle','bicycle'))/5
+    return dict(score=score,ordinary=ordinary,rare=rare)
+
+
+teacher,student = validation('teacher'),validation('student')
+teacher_classes = {c['name']:c for c in teacher['ordinary']['classes']}
+student_classes = {c['name']:c for c in student['ordinary']['classes']}
+teacher_rare = {c['name']:c for c in teacher['rare']['classes']}
+student_rare = {c['name']:c for c in student['rare']['classes']}
+student_latency = next(r['total_p50_ms'] for r in benchmarks['student']['results'] if r['device']=='cuda' and not r['autocast'])
+checks = dict(score=student['score']>=teacher['score']-0.03,
+              person_recall=(student_classes['person']['recall'] or 0)>=(teacher_classes['person']['recall'] or 0)-0.03,
+              bicycle=(student_rare['bicycle']['iou'] or 0)>=(teacher_rare['bicycle']['iou'] or 0)-0.05,
+              car=(student_classes['car']['iou'] or 0)>=0.8,latency=student_latency<=20)
+selected = 'student' if all(checks.values()) else 'teacher'
+selection = dict(selected=selected,teacher_score=teacher['score'],student_score=student['score'],student_checks=checks,
+                 model_hashes={n:hashlib.sha256(p.read_bytes()).hexdigest() for n,p in models.items()},
+                 selected_before_test_predictions_at_utc=datetime.now(UTC).isoformat(),policy=json.loads(policy_path.read_text()))
+(results/'model-selection.json').write_text(json.dumps(selection,indent=2),encoding='utf-8')
+
+# All test predictions start only after the validation/latency decision is saved.
+evaluations = {}
+for name,model in models.items():
+    evaluations[name] = command('evaluate_perception.py',['--data',data,'--model',model],f'final-{name}-test',results/f'final-{name}-test.json')
+    for split in ('test','test_challenge'):
+        command('evaluate_corruptions.py',['--data',data,'--model',model,'--split',split,'--frames','200'],f'final-{name}-corruptions-{split}',results/f'final-{name}-corruptions-{split}.json')
+
+destination = results/'composite-diagnostic-final'
+if not (destination/'summary.json').exists():
+    if destination.exists():
+        raise SystemExit('Incomplete composite output exists; preserve and review before retry')
+    state.write_text(json.dumps(dict(status='evaluating',operation='perception-to-dry-brake')),encoding='utf-8')
+    with (results/'composite-diagnostic-console.txt').open('w',encoding='utf-8') as log:
+        result = subprocess.run([sys.executable,str(repo/'tools'/'replay_composites.py'),'--data',str(data),'--model',str(models[selected]),'--output',str(destination)],cwd=work.parent,stdout=log,stderr=subprocess.STDOUT,creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
+    if result.returncode:
+        state.write_text(json.dumps(dict(status='failed',operation='composite-diagnostic')),encoding='utf-8')
+        raise SystemExit(result.returncode)
+
+sys.path.insert(0,str(repo/'tools'))
+from quality_gate import gate
+acceptance = {name:gate(report['partitions']['test']['pixel_metrics']) for name,report in evaluations.items()}
+(results/'final-acceptance.json').write_text(json.dumps(acceptance,indent=2),encoding='utf-8')
+state.write_text(json.dumps(dict(status='complete',selected=selected,game_input_emitted=False)),encoding='utf-8')
+print(json.dumps(dict(status='complete',selected=selected)),flush=True)

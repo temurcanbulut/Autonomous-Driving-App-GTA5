@@ -1,0 +1,73 @@
+{
+  "protocol": "offline_oracle_state_longitudinal_v1",
+  "seed": 730000,
+  "cases": 2000,
+  "timestep_s": 0.02,
+  "horizon_s": 8,
+  "groups": {
+    "vehicle_cut_in": {
+      "cases": 258,
+      "assist_collisions": 30,
+      "baseline_collisions": 212,
+      "reverse_events": 0,
+      "brake_seconds": 205.83999999999997
+    },
+    "stopped_vehicle": {
+      "cases": 238,
+      "assist_collisions": 97,
+      "baseline_collisions": 235,
+      "reverse_events": 0,
+      "brake_seconds": 295.18
+    },
+    "pedestrian_crossing": {
+      "cases": 266,
+      "assist_collisions": 126,
+      "baseline_collisions": 152,
+      "reverse_events": 0,
+      "brake_seconds": 83.91999999999996
+    },
+    "clear_road": {
+      "cases": 261,
+      "assist_collisions": 0,
+      "baseline_collisions": 0,
+      "reverse_events": 0,
+      "brake_seconds": 0.0
+    },
+    "near_stop": {
+      "cases": 241,
+      "assist_collisions": 0,
+      "baseline_collisions": 0,
+      "reverse_events": 0,
+      "brake_seconds": 0.0
+    },
+    "sidewalk_person": {
+      "cases": 242,
+      "assist_collisions": 0,
+      "baseline_collisions": 0,
+      "reverse_events": 0,
+      "brake_seconds": 0.0
+    },
+    "late_unavoidable": {
+      "cases": 238,
+      "assist_collisions": 235,
+      "baseline_collisions": 235,
+      "reverse_events": 0,
+      "brake_seconds": 37.979999999999954
+    },
+    "stale_sensor": {
+      "cases": 256,
+      "assist_collisions": 247,
+      "baseline_collisions": 247,
+      "reverse_events": 0,
+      "brake_seconds": 0.0
+    }
+  },
+  "counterexamples": [],
+  "counterexample_count": 0,
+  "limitations": [
+    "Uses exact simulated obstacle geometry, not camera predictions.",
+    "Simplified flat-road dynamics; no GTA physics or keyboard actuation has been validated.",
+    "Late hazards and stale sensors may remain unavoidable; report all cohorts.",
+    "Collision counts are scenario results, not a real-world or game safety probability."
+  ]
+}

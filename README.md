@@ -1,95 +1,62 @@
-# GTA 5 Perception · Object detection experiment
+# GTA Assist Lab
 
-Real-time screen or recorded-video object detection using YOLOv3 and OpenCV. This repository continues the original GTA 5 experiment with a configurable pipeline, correct COCO labels, and reproducible run metrics.
+Scene perception and driving-assistance experiments in GTA V. The project learns 19 semantic scene classes, tracks nearby actors and records bounded brake decisions in offline replays.
 
-It is a **perception demo**: there are no driving controls and no calibrated physical-distance estimates. “Screen offset” is measured in pixels from the image's bottom-center to a detected vehicle's box center. It does not tell you which vehicle is physically closest, or identify the player's own vehicle.
+**Research preview.** Live game input is disabled. The brake diagnostic still mistakes the visible ego hood for an external vehicle, and bicycle recognition is weak in the synthetic crossing sequence. This release is for inspecting and reproducing the experiment.
 
-## Setup
+![GTA frames, ground-truth labels and the trained model's predictions](docs/images/holdout-preview.png)
 
-Python 3.11 or newer:
+The examples above were selected with a fixed seed using ground-truth class presence. Grey ground-truth regions are ignored by the dataset; the model's predictions there are not verified. Image source: Richter, Vineet, Roth & Koltun, *Playing for Data*, ECCV 2016.
 
-```sh
-git clone https://github.com/temurcanbulut/Autonomous-Driving-App-GTA5.git
-cd Autonomous-Driving-App-GTA5
-python -m venv .venv
-```
+## Measured results
 
-Activate with `.venv\Scripts\Activate.ps1` on Windows PowerShell or `source .venv/bin/activate` on Linux/macOS, then:
+Three frozen models were evaluated on the same 798-image test subset. These are pixel-overlap scores; each model uses its recorded input resolution. Candidate selection used validation data before opening this test.
+
+| Model | Mean IoU | Person IoU | Bicycle IoU | Car IoU | CUDA FP32 p50 |
+|---|---:|---:|---:|---:|---:|
+| Previous LR-ASPP | 48.7% | 56.1% | 10.1% | 77.7% | 18.3 ms |
+| Expanded DeepLab | **63.5%** | **68.7%** | **55.8%** | **87.6%** | 29.1 ms |
+| Expanded LR-ASPP | 58.5% | 63.5% | 43.3% | 84.7% | 21.4 ms |
+
+![Accuracy and measured perception latency](docs/images/perception-results.png)
+
+Latency includes preprocessing, transfers and connected components on an RTX 4070 Laptop GPU, using 30 validation frames after warm-up. Capture, decoding and GTA rendering are excluded. The earlier and small models use 768×432 inputs; DeepLab uses 960×544. It is not a GTA FPS measurement.
+
+## Run a recorded video
+
+Python 3.11+; create and activate a virtual environment first. Choose the appropriate PyTorch build for your hardware from the [official installer](https://pytorch.org/get-started/locally/). The measured Windows/CUDA environment used:
 
 ```sh
 python -m pip install -r requirements.txt
+python -m pip install torch==2.14.1 torchvision==0.29.1 --index-url https://download.pytorch.org/whl/cu130
+python -m pip install -r training/requirements.txt
+python Autonomous-Driving-App-GTA5/assist_lab.py --model gta-semantic-deeplab-expanded.pt --source gameplay.mp4 --no-preview --trace observations.jsonl
 ```
 
-Download [YOLOv3 weights from the original author](https://pjreddie.com/media/files/yolov3.weights) (about 237 MB) and put `yolov3.weights` alongside `yolov3.cfg` in `Autonomous-Driving-App-GTA5/`. Configuration and all 80 COCO names are included. Weights are not committed or downloaded automatically. See the [upstream model documentation](https://pjreddie.com/darknet/yolo/) for model details.
+The trained weights are separate [release assets](https://github.com/temurcanbulut/Autonomous-Driving-App-GTA5/releases/tag/research-2026-10-15). Verify their SHA256 hashes against [models.json](artifacts/models.json). Runtime does not download weights implicitly. `--device cpu` runs without CUDA; `--amp` is an optional CUDA mode. The CLI never presses game keys.
 
-The defaults are resolved relative to the script, so it can be launched from another working directory. Custom `--weights`, `--config` and `--names` paths are also supported. The label count must match every YOLO head's class count.
+## Training and evaluation
 
-## Live screen
+The expanded pool contains 5,999 training images, 795 representative validation images, 798 representative test images and separate 227/283-image rare-class challenges. Training includes 246 bicycle-containing frames. The teacher completed 1+20+8 epochs; the smaller student completed ten additional epochs with teacher distillation. The dataset is [Playing for Data](https://download.visinf.tu-darmstadt.de/data/from_games/), for research/educational use. Raw dataset images are not included in the repository.
 
-Use a windowed/borderless GTA 5 session on monitor 1:
+- [Model card and reproduction details](docs/MODEL_CARD.md): acquisition, splits, exact training protocol and limitations.
+- [Experiments](experiments/README.md): frozen configurations, logs, confusion matrices, corruptions, timing and acceptance checks.
+- [Training curve](docs/images/training-curve.png): validation-based checkpoint selection.
 
-```sh
-python Autonomous-Driving-App-GTA5/autonomous-driving-app-gta5.py
-```
+## Brake diagnostics
 
-Press **Q** or **Escape** in the preview to quit, or **Ctrl+C** in the terminal. Screen capture may require OS permission; screen capture support depends on the OS/display server. Recorded-video mode avoids those dependencies.
+The controller uses fresh speed/gear/driver-status data, approximate calibrated camera geometry and expiring dry-run S leases. The tracker supports time-window lateral motion at high frame rates. No OS input adapter or independent real-input watchdog is included.
 
-Capture only the game region using global screen coordinates:
+In the synthetic validation-only diagnostic, the inserted bicycle matched in 5/40 frames. The sequence with no inserted actor also requested a brake on its first frame because of the ego hood. [The failure frame](docs/images/dry-brake-failure.png), [trace](experiments/composite-diagnostic-class-boxes/no_inserted_actor.jsonl) and [all sequence results](experiments/composite-diagnostic-class-boxes/summary.json) are retained. These artificial sequences are not GTA gameplay or a collision-avoidance benchmark.
 
-```sh
-python Autonomous-Driving-App-GTA5/autonomous-driving-app-gta5.py --region 100 100 1280 720
-```
+[Live-assistance criteria remain unmet](experiments/final-acceptance.json). Camera/ego-mask validation and end-to-end GTA scenarios are still required. The original YOLOv3 entry point remains available under `Autonomous-Driving-App-GTA5/autonomous-driving-app-gta5.py`.
 
-## Recorded video and metrics
-
-Process the same clip for comparable runs:
+## Development
 
 ```sh
-python Autonomous-Driving-App-GTA5/autonomous-driving-app-gta5.py --source gameplay.mp4 --headless --input-size 320 --max-frames 300 --output annotated.avi --metrics metrics-320.json
-```
-
-Repeat with `--input-size 416` or `608` and different output names. Reports include frame count, processing FPS, mean inference/detector time, thresholds and OpenCV version. They include warm-up frames; model loading is excluded. Capture, drawing and output are included in processing FPS. Compare runs using the same source, frame limit, device and output options. No universal FPS gain or accuracy improvement is claimed without measurements on representative footage.
-
-Exports contain no audio. `--output-fps` controls encoded playback rate (default 30), independently of processing FPS; match it to the source video's rate if preserving timing matters. Existing output files are not overwritten. The JSON metrics summarize the run; they do not contain frame-level detection results or accuracy metrics.
-
-## Options
-
-| Option | Default | Purpose |
-|---|---|---|
-| `--source` | `screen` | Screen or local video path |
-| `--monitor` | `1` | Screen monitor index |
-| `--region LEFT TOP WIDTH HEIGHT` | full monitor | Capture region; overrides monitor |
-| `--input-size` | `416` | 320, 416 or 608 square model input |
-| `--confidence` | `0.5` | Minimum detection confidence |
-| `--nms` | `0.4` | Overlap suppression threshold |
-| `--device` | `cpu` | `cpu` or `cuda` |
-| `--all-classes` | off | Include all 80 classes |
-| `--headless` | off | Disable preview window |
-| `--max-frames` | `0` | Stop after N frames; 0 means until quit/EOF |
-| `--output` | none | Annotated `.avi` or `.mp4` |
-| `--output-fps` | `30` | Encoded playback FPS |
-| `--metrics` | none | JSON run metrics |
-
-Default classes: people, bicycles, cars, motorcycles, buses, trains, trucks, traffic lights and stop signs. CUDA requires a CUDA-enabled OpenCV DNN build and compatible hardware; ordinary PyPI wheels are generally used in CPU mode. A missing CUDA device produces an explicit error rather than silently changing the requested mode.
-
-## Pipeline and limitations
-
-1. Capture one frame or decode one video frame.
-2. Letterbox it to square model input while preserving aspect ratio.
-3. Run YOLOv3 using OpenCV DNN output layer names.
-4. Decode class scores and restore/clamp boxes to source coordinates.
-5. Suppress overlapping boxes **within each class**, then annotate and optionally export.
-
-OpenCV's Darknet Region layer already incorporates objectness into its class scores; the decoder does not multiply it again. See the [OpenCV Region implementation](https://github.com/opencv/opencv/blob/4.x/modules/dnn/src/layers/region_layer.cpp). COCO class names/order follow the [upstream label file](https://github.com/pjreddie/darknet/blob/master/data/coco.names).
-
-The model is trained on COCO photographs, so GTA scenes may produce misses and false positives. There is no temporal tracking, ego-vehicle separation, depth calibration, lane detection or control loop. Those require separate evaluation; changing input size also changes the speed/accuracy tradeoff.
-
-## Tests
-
-```sh
+python -m pip install -r requirements-dev.txt
+python -m ruff check .
 python -m unittest discover -s tests -v
 ```
 
-Tests need no game or model weights. They cover label order, letterbox coordinate restoration, class-aware NMS, confidence handling, pixel offsets, bad model setup, video export/readback and metrics. CI runs on Windows/Linux with Python 3.11/3.13. A real model/footage smoke test is separate from this deterministic suite.
-
-See [CHANGELOG.md](CHANGELOG.md) for the changes. Earlier source and screenshots remain in Git history.
+The recorded local run passed 57 tests. Optional training-math tests require PyTorch and the training dependencies. CI includes Windows/Linux runtime checks and a CPU training-math job.

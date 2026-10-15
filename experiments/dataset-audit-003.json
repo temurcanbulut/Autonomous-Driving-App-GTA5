@@ -1,0 +1,129 @@
+{
+  "passed": true,
+  "errors": [],
+  "partitions": {
+    "train": {
+      "samples": 5999,
+      "frame_presence": {
+        "road": 5933,
+        "sidewalk": 5717,
+        "building": 5967,
+        "wall": 5442,
+        "fence": 4199,
+        "pole": 5913,
+        "traffic_light": 3877,
+        "traffic_sign": 2984,
+        "vegetation": 5944,
+        "terrain": 5652,
+        "sky": 5891,
+        "person": 4739,
+        "rider": 1046,
+        "car": 5361,
+        "truck": 3655,
+        "bus": 962,
+        "train": 119,
+        "motorcycle": 897,
+        "bicycle": 246
+      }
+    },
+    "val_challenge": {
+      "samples": 227,
+      "frame_presence": {
+        "road": 226,
+        "sidewalk": 225,
+        "building": 227,
+        "wall": 196,
+        "fence": 147,
+        "pole": 222,
+        "traffic_light": 168,
+        "traffic_sign": 76,
+        "vegetation": 227,
+        "terrain": 217,
+        "sky": 227,
+        "person": 207,
+        "rider": 124,
+        "car": 202,
+        "truck": 145,
+        "bus": 41,
+        "train": 0,
+        "motorcycle": 89,
+        "bicycle": 29
+      }
+    },
+    "val": {
+      "samples": 795,
+      "frame_presence": {
+        "road": 773,
+        "sidewalk": 780,
+        "building": 793,
+        "wall": 667,
+        "fence": 452,
+        "pole": 785,
+        "traffic_light": 527,
+        "traffic_sign": 260,
+        "vegetation": 792,
+        "terrain": 753,
+        "sky": 791,
+        "person": 628,
+        "rider": 76,
+        "car": 669,
+        "truck": 444,
+        "bus": 65,
+        "train": 1,
+        "motorcycle": 74,
+        "bicycle": 5
+      }
+    },
+    "test": {
+      "samples": 798,
+      "frame_presence": {
+        "road": 794,
+        "sidewalk": 768,
+        "building": 797,
+        "wall": 747,
+        "fence": 522,
+        "pole": 791,
+        "traffic_light": 557,
+        "traffic_sign": 431,
+        "vegetation": 786,
+        "terrain": 729,
+        "sky": 790,
+        "person": 667,
+        "rider": 119,
+        "car": 739,
+        "truck": 537,
+        "bus": 165,
+        "train": 11,
+        "motorcycle": 109,
+        "bicycle": 14
+      }
+    },
+    "test_challenge": {
+      "samples": 283,
+      "frame_presence": {
+        "road": 282,
+        "sidewalk": 276,
+        "building": 282,
+        "wall": 264,
+        "fence": 198,
+        "pole": 282,
+        "traffic_light": 194,
+        "traffic_sign": 163,
+        "vegetation": 280,
+        "terrain": 259,
+        "sky": 281,
+        "person": 258,
+        "rider": 180,
+        "car": 273,
+        "truck": 204,
+        "bus": 55,
+        "train": 1,
+        "motorcycle": 98,
+        "bicycle": 83
+      }
+    }
+  },
+  "excluded": 10,
+  "scope": "Exact ID/byte hash separation; does not prove different gameplay-session separation.",
+  "manifest_sha256": "29a95012c05a83d17f5a530f2a6f7bdf31b6f3d7be2e6e0fe71e1a9ec753b13b"
+}

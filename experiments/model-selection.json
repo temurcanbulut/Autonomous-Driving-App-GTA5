@@ -1,0 +1,23 @@
+{
+  "selected": "teacher",
+  "teacher_score": 0.6540771676718502,
+  "student_score": 0.6190265125807679,
+  "student_checks": {
+    "score": false,
+    "person_recall": false,
+    "bicycle": true,
+    "car": true,
+    "latency": false
+  },
+  "model_hashes": {
+    "baseline": "a4208c5ef1bee21b42af6ba9c5e9b6fab73a3018aa7a3baf3ea90f3680ceaa0d",
+    "teacher": "b242f06cb943955170a24cf9b77ad7126c9721b65cfc85ea5ee4628dd708f3f0",
+    "student": "a2255b79a4587459e2e97c7ed7e36db4b5f9a5a3e0ff94113b2973741a2f98f9"
+  },
+  "selected_before_test_predictions_at_utc": "2026-10-15T16:50:23.282017+00:00",
+  "policy": {
+    "defined_at_utc": "2026-10-15T16:18:28.730596+00:00",
+    "rule": "Prefer student only when validation score within 0.03, person recall within 0.03, rare-validation bicycle IoU within 0.05, car IoU at least 0.8 and CUDA FP32 p50 at most 20 ms; otherwise teacher. Test predictions never select models.",
+    "scope": "Research replay candidate selection only; not live-assistance approval."
+  }
+}

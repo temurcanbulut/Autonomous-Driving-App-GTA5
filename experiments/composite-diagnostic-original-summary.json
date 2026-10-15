@@ -1,0 +1,76 @@
+{
+  "protocol": "synthetic_cutout_perception_to_dry_brake_v1",
+  "checkpoint_sha256": "b242f06cb943955170a24cf9b77ad7126c9721b65cfc85ea5ee4628dd708f3f0",
+  "data_split": "validation_only",
+  "frames_per_sequence": 40,
+  "fps": 10,
+  "game_input_emitted": false,
+  "limitations": [
+    "Composited GTA sprites on a static GTA background, not actual gameplay.",
+    "Media-clock timing and artificial flat-camera assumptions; no collision or stopping-efficacy result.",
+    "No inserted actor is not a guarantee that unlabelled background pixels are actor-free.",
+    "Confidence is not a calibrated safety probability."
+  ],
+  "sequences": {
+    "person_crossing": {
+      "visible_frames": 38,
+      "target_detected_frames": 34,
+      "first_detection_s": 0.5,
+      "first_any_dry_brake_s": 0.0,
+      "braking_frames": 11,
+      "reasons": {
+        "fresh_imminent_path_conflict": 11,
+        "required_release_interval": 10,
+        "no_fresh_path_conflict": 19
+      }
+    },
+    "bicycle_crossing": {
+      "visible_frames": 40,
+      "target_detected_frames": 5,
+      "first_detection_s": 1.7,
+      "first_any_dry_brake_s": 0.0,
+      "braking_frames": 18,
+      "reasons": {
+        "fresh_imminent_path_conflict": 18,
+        "required_release_interval": 16,
+        "no_fresh_path_conflict": 6
+      }
+    },
+    "vehicle_cut_in": {
+      "visible_frames": 34,
+      "target_detected_frames": 27,
+      "first_detection_s": 1.3,
+      "first_any_dry_brake_s": 0.0,
+      "braking_frames": 14,
+      "reasons": {
+        "fresh_imminent_path_conflict": 14,
+        "required_release_interval": 14,
+        "no_fresh_path_conflict": 12
+      }
+    },
+    "sidewalk_person": {
+      "visible_frames": 40,
+      "target_detected_frames": 40,
+      "first_detection_s": 0.0,
+      "first_any_dry_brake_s": 0.0,
+      "braking_frames": 1,
+      "reasons": {
+        "fresh_imminent_path_conflict": 1,
+        "required_release_interval": 1,
+        "no_fresh_path_conflict": 38
+      }
+    },
+    "no_inserted_actor": {
+      "visible_frames": 0,
+      "target_detected_frames": 0,
+      "first_detection_s": null,
+      "first_any_dry_brake_s": 0.0,
+      "braking_frames": 1,
+      "reasons": {
+        "fresh_imminent_path_conflict": 1,
+        "required_release_interval": 1,
+        "no_fresh_path_conflict": 38
+      }
+    }
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "parity": {
+    "loss_abs_error": 0.0,
+    "gradient_max_abs_error": 3.725290298461914e-09
+  },
+  "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU",
+  "torch": "2.14.1+cu130",
+  "input_size": [
+    960,
+    544
+  ],
+  "results": [
+    {
+      "mode": "legacy_contiguous",
+      "median_ms": 141.13345002988353,
+      "p95_ms": 145.90940007474273,
+      "batch_size": 4,
+      "measured_steps": 20,
+      "warmup_steps": 5,
+      "peak_allocated_bytes": 2348984832
+    },
+    {
+      "mode": "vectorized_contiguous",
+      "median_ms": 117.72974993800744,
+      "p95_ms": 120.52779993973672,
+      "batch_size": 4,
+      "measured_steps": 20,
+      "warmup_steps": 5,
+      "peak_allocated_bytes": 1913510400
+    },
+    {
+      "mode": "vectorized_channels_last",
+      "median_ms": 363.29519998980686,
+      "p95_ms": 368.87969996314496,
+      "batch_size": 4,
+      "measured_steps": 20,
+      "warmup_steps": 5,
+      "peak_allocated_bytes": 1910629888
+    }
+  ],
+  "scope": "Same predecoded training batch; AMP forward + loss + backward; no optimizer update, loader, augmentation, validation or gameplay included."
+}

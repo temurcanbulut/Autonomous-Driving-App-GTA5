@@ -1,0 +1,21 @@
+{
+  "format": "pytorch-state-dict",
+  "release": "research-2026-10-15",
+  "usage": "Research/education GTA perception experiment; see model card and original dataset conditions.",
+  "files": [
+    {
+      "file": "gta-semantic-deeplab-expanded.pt",
+      "sha256": "b242f06cb943955170a24cf9b77ad7126c9721b65cfc85ea5ee4628dd708f3f0",
+      "bytes": 44426253,
+      "url": "https://github.com/temurcanbulut/Autonomous-Driving-App-GTA5/releases/download/research-2026-10-15/gta-semantic-deeplab-expanded.pt",
+      "candidate": "teacher"
+    },
+    {
+      "file": "gta-semantic-lraspp-expanded.pt",
+      "sha256": "a2255b79a4587459e2e97c7ed7e36db4b5f9a5a3e0ff94113b2973741a2f98f9",
+      "bytes": 13189938,
+      "url": "https://github.com/temurcanbulut/Autonomous-Driving-App-GTA5/releases/download/research-2026-10-15/gta-semantic-lraspp-expanded.pt",
+      "candidate": "student"
+    }
+  ]
+}

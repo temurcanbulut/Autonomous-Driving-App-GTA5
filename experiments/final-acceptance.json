@@ -1,0 +1,116 @@
+{
+  "baseline": {
+    "ready_for_live_assist": false,
+    "checks": [
+      {
+        "name": "mean_iou_at_least_0.65",
+        "passed": false
+      },
+      {
+        "name": "person_pixel_recall_at_least_0.95",
+        "passed": false
+      },
+      {
+        "name": "car_iou_at_least_0.80",
+        "passed": false
+      },
+      {
+        "name": "bicycle_iou_at_least_0.50",
+        "passed": false
+      },
+      {
+        "name": "bicycle_test_support_at_least_10000_pixels",
+        "passed": true
+      },
+      {
+        "name": "live_game_telemetry_and_input_verified",
+        "passed": false
+      },
+      {
+        "name": "camera_and_ego_vehicle_mask_validated",
+        "passed": false
+      },
+      {
+        "name": "end_to_end_perception_to_brake_evaluated",
+        "passed": false
+      }
+    ],
+    "scope": "Project development criteria, deliberately separate from unit-test pass status. These thresholds are engineering targets, not validated safety probabilities."
+  },
+  "teacher": {
+    "ready_for_live_assist": false,
+    "checks": [
+      {
+        "name": "mean_iou_at_least_0.65",
+        "passed": false
+      },
+      {
+        "name": "person_pixel_recall_at_least_0.95",
+        "passed": false
+      },
+      {
+        "name": "car_iou_at_least_0.80",
+        "passed": true
+      },
+      {
+        "name": "bicycle_iou_at_least_0.50",
+        "passed": true
+      },
+      {
+        "name": "bicycle_test_support_at_least_10000_pixels",
+        "passed": true
+      },
+      {
+        "name": "live_game_telemetry_and_input_verified",
+        "passed": false
+      },
+      {
+        "name": "camera_and_ego_vehicle_mask_validated",
+        "passed": false
+      },
+      {
+        "name": "end_to_end_perception_to_brake_evaluated",
+        "passed": false
+      }
+    ],
+    "scope": "Project development criteria, deliberately separate from unit-test pass status. These thresholds are engineering targets, not validated safety probabilities."
+  },
+  "student": {
+    "ready_for_live_assist": false,
+    "checks": [
+      {
+        "name": "mean_iou_at_least_0.65",
+        "passed": false
+      },
+      {
+        "name": "person_pixel_recall_at_least_0.95",
+        "passed": false
+      },
+      {
+        "name": "car_iou_at_least_0.80",
+        "passed": true
+      },
+      {
+        "name": "bicycle_iou_at_least_0.50",
+        "passed": false
+      },
+      {
+        "name": "bicycle_test_support_at_least_10000_pixels",
+        "passed": true
+      },
+      {
+        "name": "live_game_telemetry_and_input_verified",
+        "passed": false
+      },
+      {
+        "name": "camera_and_ego_vehicle_mask_validated",
+        "passed": false
+      },
+      {
+        "name": "end_to_end_perception_to_brake_evaluated",
+        "passed": false
+      }
+    ],
+    "scope": "Project development criteria, deliberately separate from unit-test pass status. These thresholds are engineering targets, not validated safety probabilities."
+  }
+}

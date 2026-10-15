@@ -1,17 +1,15 @@
-from dataclasses import replace
 import json
-from pathlib import Path
 import sys
 import tempfile
 import unittest
+from dataclasses import replace
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import cv2
 import numpy as np
 
-sys.path.insert(
-    0, str(Path(__file__).resolve().parents[1] / "Autonomous-Driving-App-GTA5")
-)
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "Autonomous-Driving-App-GTA5"))
 import vision
 
 
@@ -70,9 +68,7 @@ class DetectionTests(unittest.TestCase):
 
     def test_mismatched_output_rejected(self):
         with self.assertRaises(ValueError):
-            vision.decode_detections(
-                [np.zeros((1, 14))], (416, 416), self.transform, 0.5, 0.4, 80
-            )
+            vision.decode_detections([np.zeros((1, 14))], (416, 416), self.transform, 0.5, 0.4, 80)
 
     def test_letterbox_restores_widescreen_coordinates(self):
         frame = np.zeros((720, 1280, 3), dtype=np.uint8)
@@ -82,7 +78,7 @@ class DetectionTests(unittest.TestCase):
         detection = vision.decode_detections(
             [np.array([item])], frame.shape, transform, 0.5, 0.4, 80
         )[0]
-        for actual, expected in zip(detection.box, (576, 324, 128, 72)):
+        for actual, expected in zip(detection.box, (576, 324, 128, 72), strict=True):
             self.assertAlmostEqual(actual, expected, delta=2)
 
     def test_box_clips_to_frame(self):
@@ -107,9 +103,10 @@ class PipelineTests(unittest.TestCase):
             args = vision.parser().parse_args(
                 ["--names", str(root / "bad.names"), "--weights", str(root / "weights")]
             )
-            with patch(
-                "vision.cv2.dnn.readNetFromDarknet"
-            ) as load, self.assertRaisesRegex(ValueError, "label file"):
+            with (
+                patch("vision.cv2.dnn.readNetFromDarknet") as load,
+                self.assertRaisesRegex(ValueError, "label file"),
+            ):
                 vision.Detector(args)
             load.assert_not_called()
 
@@ -141,16 +138,16 @@ class PipelineTests(unittest.TestCase):
                 for _ in range(3):
                     yield np.zeros((128, 192, 3), dtype=np.uint8)
 
-            with patch("vision.Detector", return_value=detector), patch(
-                "vision.frames", side_effect=source
-            ), patch("vision.cv2.imshow") as show:
+            with (
+                patch("vision.Detector", return_value=detector),
+                patch("vision.frames", side_effect=source),
+                patch("vision.cv2.imshow") as show,
+            ):
                 metrics = vision.run(args)
             show.assert_not_called()
             self.assertEqual(metrics["frames"], 2)
             self.assertEqual(metrics["mean_inference_ms"], 5)
-            self.assertEqual(
-                json.loads((root / "metrics.json").read_text())["frames"], 2
-            )
+            self.assertEqual(json.loads((root / "metrics.json").read_text())["frames"], 2)
             capture = cv2.VideoCapture(str(root / "result.avi"))
             try:
                 self.assertTrue(capture.isOpened())

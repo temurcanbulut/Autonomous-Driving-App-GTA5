@@ -1,0 +1,41 @@
+{
+  "scope": "CPU semantic-component extraction only. Ten real teacher masks from validation, constant synthetic confidence 0.8, three repetitions after warmup. Concurrent final evaluation may affect timings; not complete pipeline latency.",
+  "image_ids": [
+    "00052",
+    "00069",
+    "00232",
+    "00285",
+    "00311",
+    "00320",
+    "00370",
+    "00373",
+    "00409",
+    "00414"
+  ],
+  "results": [
+    {
+      "opencv_threads": 32,
+      "p50_ms": 10.277100023813546,
+      "p95_ms": 11.331694963155314,
+      "outputs_exactly_equal": true
+    },
+    {
+      "opencv_threads": 1,
+      "p50_ms": 14.367899915669113,
+      "p95_ms": 16.81023999699391,
+      "outputs_exactly_equal": true
+    },
+    {
+      "opencv_threads": 2,
+      "p50_ms": 11.614450020715594,
+      "p95_ms": 12.827375013148412,
+      "outputs_exactly_equal": true
+    },
+    {
+      "opencv_threads": 4,
+      "p50_ms": 8.802850032225251,
+      "p95_ms": 10.125355020863935,
+      "outputs_exactly_equal": true
+    }
+  ]
+}
