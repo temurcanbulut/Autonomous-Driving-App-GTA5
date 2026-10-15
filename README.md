@@ -7,6 +7,10 @@
 <p align="center">Explore scene perception and driving-assistance decisions in GTA V.<br>Trained models, replay tools and inspectable experiment records.</p>
 <p align="center"><a href="README.tr.md">Türkçe</a> · <a href="#try-it-without-a-gpu">Try the replay desk</a> · <a href="docs/MODEL_CARD.md">Model card</a> · <a href="docs/ROADMAP.md">Roadmap</a></p>
 
+![Pedestrian, bicycle and vehicle cut-in: trained perception, path-conflict estimates and dry-run brake requests](docs/images/test-explainer.gif)
+
+**Watch the decision pipeline:** model output → tracked objects → estimated path conflict → dry-run brake request. These are composited validation actors on a static GTA scene, with actual model outputs; no game keys are sent. The hood false alarm and bicycle misses remain visible. [Source records and interpretation](docs/DEMONSTRATION.md).
+
 ## What you can explore
 
 - **19 scene classes.** Roads, sidewalks, signals, pedestrians, riders, bicycles and vehicles from trained semantic segmentation models.

@@ -2,6 +2,10 @@
 <p align="center">GTA V sahnelerini algıla. Kayıtları incele. Sürüş desteği kararlarını görünür kıl.</p>
 <p align="center"><a href="README.md">English</a> · <a href="docs/MODEL_CARD.md">Model kartı</a></p>
 
+![Yaya, bisiklet ve öne giren araç: eğitilmiş algı, yol çakışması ve kuru fren istekleri](docs/images/test-explainer.gif)
+
+**Kararın nasıl oluştuğunu izle:** model çıktısı → takip edilen nesneler → tahmini yol çakışması → kuru fren isteği. Sabit GTA sahnesine doğrulama aktörleri yerleştirildi; gösterilen algılar gerçek model çıktılarıdır. Oyuna tuş gönderilmez. Kaput kaynaklı yanlış fren ve kaçırılan bisikletler görünür kalır. [Kaynak kayıtları ve açıklama](docs/DEMONSTRATION.md).
+
 
 Proje; 19 sınıflı sahne algısı, nesne takibi ve çevrimdışı fren deneyleri içerir. Oyun tuşlarına basmaz.
 

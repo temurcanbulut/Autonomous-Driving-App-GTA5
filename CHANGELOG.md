@@ -1,5 +1,10 @@
 # Changelog
 
+## Decision-pipeline demonstration — 2026-10-15
+
+- Replace the withdrawn box-only GIF with scene overlays showing actual perception, approximate path conflicts and dry-run brake decisions.
+- Retain the full-body illustration records separately from frozen evaluations, with source attribution and visible failure cases.
+
 ## Product workflows — 2026-10-15
 
 - Added a portable replay desk built from real JSONL, with source hashes, frame controls, geometry validation and explicit missing-input states.
