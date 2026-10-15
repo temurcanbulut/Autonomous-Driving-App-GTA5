@@ -1,102 +1,95 @@
-# Object Recognition-Based Autonomous Driving in GTA 5
+# GTA 5 Perception · Object detection experiment
 
-This project aims to perform autonomous driving tests using object recognition in the GTA 5 game. Below, you will find the explanation of the code, the libraries used, and how to download the necessary files.
+Real-time screen or recorded-video object detection using YOLOv3 and OpenCV. This repository continues the original GTA 5 experiment with a configurable pipeline, correct COCO labels, and reproducible run metrics.
 
-## Features
+It is a **perception demo**: there are no driving controls and no calibrated physical-distance estimates. “Screen offset” is measured in pixels from the image's bottom-center to a detected vehicle's box center. It does not tell you which vehicle is physically closest, or identify the player's own vehicle.
 
-- Real-time object recognition (humans, vehicles, traffic signs, etc.)
-- Highlighting specific objects with different colors
-- Calculating and displaying the distance of the nearest vehicle
-- Screen capturing and processing
+## Setup
 
-## Purpose
+Python 3.11 or newer:
 
-This project aims to demonstrate the applicability of object recognition algorithms in the GTA 5 game and how they can be used in autonomous driving tests. YOLOv3 is used as the object recognition model.
-
-## Libraries and Installation Commands
-
-The following libraries need to be installed for the project to work:
-
-- OpenCV
-- NumPy
-- mss
-
-Installation commands:
-
-```bash
-pip install opencv-python-headless numpy mss
+```sh
+git clone https://github.com/temurcanbulut/Autonomous-Driving-App-GTA5.git
+cd Autonomous-Driving-App-GTA5
+python -m venv .venv
 ```
 
+Activate with `.venv\Scripts\Activate.ps1` on Windows PowerShell or `source .venv/bin/activate` on Linux/macOS, then:
 
-## YOLOv3 Model Files
-You need to download the YOLOv3 model files. Follow the steps below to download the files:
-
-Download the yolov3.weights file from this link and place it in the project directory.
-Download the yolov3.cfg and coco.names files from here and place them in the project directory as well.
-
-## Code Explanation
-Loading the YOLO Model
-
+```sh
+python -m pip install -r requirements.txt
 ```
-model = cv2.dnn.readNet("yolov3.weights", "yolov3.cfg")
-layer_names = model.getLayerNames()
-output_layers = [layer_names[i - 1] for i in model.getUnconnectedOutLayers()]
+
+Download [YOLOv3 weights from the original author](https://pjreddie.com/media/files/yolov3.weights) (about 237 MB) and put `yolov3.weights` alongside `yolov3.cfg` in `Autonomous-Driving-App-GTA5/`. Configuration and all 80 COCO names are included. Weights are not committed or downloaded automatically. See the [upstream model documentation](https://pjreddie.com/darknet/yolo/) for model details.
+
+The defaults are resolved relative to the script, so it can be launched from another working directory. Custom `--weights`, `--config` and `--names` paths are also supported. The label count must match every YOLO head's class count.
+
+## Live screen
+
+Use a windowed/borderless GTA 5 session on monitor 1:
+
+```sh
+python Autonomous-Driving-App-GTA5/autonomous-driving-app-gta5.py
 ```
-This code loads the YOLO model files and determines the output layers.
 
-## Labels and Colors
+Press **Q** or **Escape** in the preview to quit, or **Ctrl+C** in the terminal. Screen capture may require OS permission; screen capture support depends on the OS/display server. Recorded-video mode avoids those dependencies.
+
+Capture only the game region using global screen coordinates:
+
+```sh
+python Autonomous-Driving-App-GTA5/autonomous-driving-app-gta5.py --region 100 100 1280 720
 ```
-classes = []
-with open("coco.names", "r") as f:
-    classes = [line.strip() for line in f.readlines()]
 
-COLORS = {
-    "person": (0, 255, 255),  # Yellow
-    "bicycle": (42, 42, 165),  # Brown
-    "car": (0, 255, 0),  # Green
-    ...
-}
+## Recorded video and metrics
+
+Process the same clip for comparable runs:
+
+```sh
+python Autonomous-Driving-App-GTA5/autonomous-driving-app-gta5.py --source gameplay.mp4 --headless --input-size 320 --max-frames 300 --output annotated.avi --metrics metrics-320.json
 ```
-Labels are read from the coco.names file, and a color is assigned to each class.
 
-## Screen Capture and Object Recognition
+Repeat with `--input-size 416` or `608` and different output names. Reports include frame count, processing FPS, mean inference/detector time, thresholds and OpenCV version. They include warm-up frames; model loading is excluded. Capture, drawing and output are included in processing FPS. Compare runs using the same source, frame limit, device and output options. No universal FPS gain or accuracy improvement is claimed without measurements on representative footage.
+
+Exports contain no audio. `--output-fps` controls encoded playback rate (default 30), independently of processing FPS; match it to the source video's rate if preserving timing matters. Existing output files are not overwritten. The JSON metrics summarize the run; they do not contain frame-level detection results or accuracy metrics.
+
+## Options
+
+| Option | Default | Purpose |
+|---|---|---|
+| `--source` | `screen` | Screen or local video path |
+| `--monitor` | `1` | Screen monitor index |
+| `--region LEFT TOP WIDTH HEIGHT` | full monitor | Capture region; overrides monitor |
+| `--input-size` | `416` | 320, 416 or 608 square model input |
+| `--confidence` | `0.5` | Minimum detection confidence |
+| `--nms` | `0.4` | Overlap suppression threshold |
+| `--device` | `cpu` | `cpu` or `cuda` |
+| `--all-classes` | off | Include all 80 classes |
+| `--headless` | off | Disable preview window |
+| `--max-frames` | `0` | Stop after N frames; 0 means until quit/EOF |
+| `--output` | none | Annotated `.avi` or `.mp4` |
+| `--output-fps` | `30` | Encoded playback FPS |
+| `--metrics` | none | JSON run metrics |
+
+Default classes: people, bicycles, cars, motorcycles, buses, trains, trucks, traffic lights and stop signs. CUDA requires a CUDA-enabled OpenCV DNN build and compatible hardware; ordinary PyPI wheels are generally used in CPU mode. A missing CUDA device produces an explicit error rather than silently changing the requested mode.
+
+## Pipeline and limitations
+
+1. Capture one frame or decode one video frame.
+2. Letterbox it to square model input while preserving aspect ratio.
+3. Run YOLOv3 using OpenCV DNN output layer names.
+4. Decode class scores and restore/clamp boxes to source coordinates.
+5. Suppress overlapping boxes **within each class**, then annotate and optionally export.
+
+OpenCV's Darknet Region layer already incorporates objectness into its class scores; the decoder does not multiply it again. See the [OpenCV Region implementation](https://github.com/opencv/opencv/blob/4.x/modules/dnn/src/layers/region_layer.cpp). COCO class names/order follow the [upstream label file](https://github.com/pjreddie/darknet/blob/master/data/coco.names).
+
+The model is trained on COCO photographs, so GTA scenes may produce misses and false positives. There is no temporal tracking, ego-vehicle separation, depth calibration, lane detection or control loop. Those require separate evaluation; changing input size also changes the speed/accuracy tradeoff.
+
+## Tests
+
+```sh
+python -m unittest discover -s tests -v
 ```
-with mss.mss() as screen:
-    monitor = screen.monitors[1]
 
-    while True:
-        screen_shot = screen.grab(monitor)
-        image = np.array(screen_shot)
-        ...
-```
-The screen is captured, and object recognition processes are performed.
+Tests need no game or model weights. They cover label order, letterbox coordinate restoration, class-aware NMS, confidence handling, pixel offsets, bad model setup, video export/readback and metrics. CI runs on Windows/Linux with Python 3.11/3.13. A real model/footage smoke test is separate from this deterministic suite.
 
-## Distance Calculation and Visualization
-```
-def calculate_distance(x1, y1, x2, y2):
-    return np.sqrt((x2 - x1)**2 + (y2 - y1)**2)
-
-if nearest_vehicle_coordinates is not None:
-    vehicle_distance_text = f"Distance: {nearest_vehicle_distance / 10:.1f} m"
-    cv2.line(image, (width // 2, height), nearest_vehicle_coordinates, (0, 255, 255), 2)
-    cv2.putText(image, vehicle_distance_text, (nearest_vehicle_coordinates[0], nearest_vehicle_coordinates[1] - 20),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 2)
-```
-The distances of objects are calculated, and the distance of the nearest vehicle is displayed.
-
-## Running the Code
-```
-python gta5_autonomous_driving.py
-```
-While the code is running, the labels and colored boxes of objects will appear in the top right corner of the screen. The distance of the nearest vehicle will be displayed at the bottom of the screen.
-
-## Acknowledgements
-- YOLO - For the object detection algorithm.
-- OpenCV - For the computer vision library.
-- mss - For the screenshot library.
-
-![1](https://github.com/user-attachments/assets/47e85e4c-4798-4e18-b1ac-c1f6b9ffa8c5)
-![2](https://github.com/user-attachments/assets/07a31cf5-b959-41f4-9bfe-05e698342df4)
-![3](https://github.com/user-attachments/assets/9e091e15-86b1-4762-8bc9-b8081f2d6a2b)
-
-
+See [CHANGELOG.md](CHANGELOG.md) for the changes. Earlier source and screenshots remain in Git history.
