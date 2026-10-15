@@ -95,4 +95,8 @@ While the code is running, the labels and colored boxes of objects will appear i
 - OpenCV - For the computer vision library.
 - mss - For the screenshot library.
 
+![1](https://github.com/user-attachments/assets/47e85e4c-4798-4e18-b1ac-c1f6b9ffa8c5)
+![2](https://github.com/user-attachments/assets/07a31cf5-b959-41f4-9bfe-05e698342df4)
+![3](https://github.com/user-attachments/assets/9e091e15-86b1-4762-8bc9-b8081f2d6a2b)
+
 
