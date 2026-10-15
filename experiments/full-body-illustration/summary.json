@@ -1,0 +1,224 @@
+{
+  "protocol": "full_body_composite_visual_diagnostic/1",
+  "fps": 10,
+  "frames_per_sequence": 40,
+  "model_sha256": "b242f06cb943955170a24cf9b77ad7126c9721b65cfc85ea5ee4628dd708f3f0",
+  "no_game_input": true,
+  "telemetry": "artificial 12 m/s, forward gear, no override",
+  "camera": {
+    "height_m": 1.5,
+    "vertical_fov_degrees": 60,
+    "horizon_y": 0.4
+  },
+  "sources": {
+    "background": {
+      "id": "00285",
+      "split": "val",
+      "image": "images/00285.jpg",
+      "label": "labels/00285.png",
+      "image_sha256": "f1db926acab2b3ec5f7dfc5ae2689c71573d6771905556810b4156f8f4ae3d9b",
+      "label_sha256": "76e9f035d50fe851e91788f4c5ebb9eb3de1388742960bc3a1a2e217d6bc29a8",
+      "prepared_image_sha256": "fe08c46a4a0a3f2f19fcb2cb25e9f96df2c5769910ae4145d2e784cf0f7e05ae",
+      "prepared_label_sha256": "90dae25a33c545830daae72a10e797ec58c48b4ede9c27b204bf6b761b92c552",
+      "class_pixels_original": [
+        908591,
+        0,
+        20096,
+        155058,
+        12816,
+        9072,
+        0,
+        0,
+        11525,
+        2749,
+        772539,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "source_part": 1,
+      "source_image_archive_etag": "\"57a20747-16de2d305\""
+    },
+    "actors": {
+      "person": {
+        "id": "19858",
+        "split": "val_challenge",
+        "image": "images/19858.jpg",
+        "label": "labels/19858.png",
+        "image_sha256": "4118a76a084307cb8e6ace2521495f7373fd1cb78c2df33aa6bf5cd04260856d",
+        "label_sha256": "80c58088fcd09f432815d85563c68dc63b979287c9e5fb67983eba5c8c7defc0",
+        "prepared_image_sha256": "f606d1b22e4301612fca62737899ce07f027e4547ac12ce459828b744d1e0364",
+        "prepared_label_sha256": "a201d3d50855621e6733698fac36d1a24c8d76026609b16741c71538c482da51",
+        "class_pixels_original": [
+          1,
+          1051296,
+          220362,
+          10,
+          6831,
+          10521,
+          0,
+          0,
+          120547,
+          51188,
+          384980,
+          104594,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "source_part": 8,
+        "source_image_archive_etag": "\"57a20f43-17d4b1429\""
+      },
+      "bicycle": {
+        "id": "17912",
+        "split": "val_challenge",
+        "image": "images/17912.jpg",
+        "label": "labels/17912.png",
+        "image_sha256": "1b01810ea276ac9381bba1b02fd8e60893a888afc0bf238f33cf5371ef973547",
+        "label_sha256": "bc1ae63e248fda4a9d7a9ebc4305973b69232fee2143d900de84f94711f82ddf",
+        "prepared_image_sha256": "d6dcc550cdec398141cf9d7f30bca55623ff1a73c3dd24a0d7e638b551dae7f2",
+        "prepared_label_sha256": "f7d730f9ccd602243c32ddb5c4710fd902b383e972f14626bbf40ed852bb0c32",
+        "class_pixels_original": [
+          867085,
+          48852,
+          247249,
+          13154,
+          3003,
+          25319,
+          5313,
+          0,
+          73490,
+          391,
+          438946,
+          5328,
+          39527,
+          10535,
+          0,
+          0,
+          0,
+          0,
+          29731
+        ],
+        "source_part": 8,
+        "source_image_archive_etag": "\"57a20f43-17d4b1429\""
+      },
+      "car": {
+        "id": "07312",
+        "split": "val_challenge",
+        "image": "images/07312.jpg",
+        "label": "labels/07312.png",
+        "image_sha256": "a30f7c479923c79038422a77a4d0eb1680f16daec767616588318599c856211c",
+        "label_sha256": "8f03832d89bc1375f5c32fb4bf981a1f0ec3b05aafb09f32612d5714842916d1",
+        "prepared_image_sha256": "0fff373386987e9842ca284bd0e702b5a0f71853648eede3b2a391dec7d00dc4",
+        "prepared_label_sha256": "850b179b992638777c551b52d2a4df934f8f802494abb05a7b150f0fcba86b01",
+        "class_pixels_original": [
+          407958,
+          13199,
+          550402,
+          812,
+          16,
+          12963,
+          40,
+          0,
+          87752,
+          1236,
+          129979,
+          2324,
+          260,
+          537963,
+          1139,
+          0,
+          0,
+          250,
+          0
+        ],
+        "source_part": 3,
+        "source_image_archive_etag": "\"57a2096e-16eb1822c\""
+      }
+    },
+    "person_component": 1,
+    "person_bbox": [
+      236,
+      107,
+      167,
+      431
+    ],
+    "person_selection": "Largest validation-challenge component passing area>=500, 2.5<h/w<5.5, h>=80 and 10-pixel image-edge margin; first candidate visually checked for whole-body visibility. Illustrative selection, not a random benchmark."
+  },
+  "sequences": {
+    "person_crossing": {
+      "visible_frames": 38,
+      "matched_frames": 36,
+      "dry_brake_frames": 10,
+      "first_detection_s": 0.4,
+      "first_brake_s": 0.0,
+      "reasons": {
+        "fresh_imminent_path_conflict": 10,
+        "required_release_interval": 9,
+        "no_fresh_path_conflict": 21
+      }
+    },
+    "bicycle_crossing": {
+      "visible_frames": 40,
+      "matched_frames": 5,
+      "dry_brake_frames": 18,
+      "first_detection_s": 1.7,
+      "first_brake_s": 0.0,
+      "reasons": {
+        "fresh_imminent_path_conflict": 18,
+        "required_release_interval": 16,
+        "no_fresh_path_conflict": 6
+      }
+    },
+    "vehicle_cut_in": {
+      "visible_frames": 34,
+      "matched_frames": 27,
+      "dry_brake_frames": 14,
+      "first_detection_s": 1.3,
+      "first_brake_s": 0.0,
+      "reasons": {
+        "fresh_imminent_path_conflict": 14,
+        "required_release_interval": 14,
+        "no_fresh_path_conflict": 12
+      }
+    },
+    "sidewalk_person": {
+      "visible_frames": 40,
+      "matched_frames": 40,
+      "dry_brake_frames": 1,
+      "first_detection_s": 0.0,
+      "first_brake_s": 0.0,
+      "reasons": {
+        "fresh_imminent_path_conflict": 1,
+        "required_release_interval": 1,
+        "no_fresh_path_conflict": 38
+      }
+    },
+    "no_inserted_actor": {
+      "visible_frames": 0,
+      "matched_frames": 0,
+      "dry_brake_frames": 1,
+      "first_detection_s": null,
+      "first_brake_s": 0.0,
+      "reasons": {
+        "fresh_imminent_path_conflict": 1,
+        "required_release_interval": 1,
+        "no_fresh_path_conflict": 38
+      }
+    }
+  },
+  "limitations": [
+    "Composited validation sprites on a static GTA background; no natural motion or vehicle dynamics.",
+    "No collision-avoidance or stopping-efficacy result. Source masks are not object-instance truth.",
+    "Actor matches use class-specific IoU>=0.15; they are diagnostic associations, not gameplay accuracy."
+  ]
+}
