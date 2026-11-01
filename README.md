@@ -85,3 +85,7 @@ python -m unittest discover -s tests -v
 ```
 
 The current local run passes 61 tests with training dependencies available. CI covers Windows/Linux runtime checks and a separate CPU training-math job. [Contributing](CONTRIBUTING.md) · [Security and checkpoint trust](SECURITY.md) · [Changelog](CHANGELOG.md).
+
+## License
+
+Original project source code and documentation text are licensed under [MIT](LICENSE). Third-party configurations, datasets, scene imagery and model weights are outside that grant; see [licensing scope](LICENSING.md).

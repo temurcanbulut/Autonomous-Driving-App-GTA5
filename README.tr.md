@@ -46,3 +46,7 @@ Aynı 798 görüntülük testte DeepLab: ortalama IoU **%63,5**, kişi IoU **%68
 **Henüz doğrulanmış yarı otonom sürüş değil.** Mevcut tanısal dizide kaput harici araç sanılıp ilk karede yanlış fren isteği doğuruyor. Yapay bisiklet dizisinde hedef yalnızca 5/40 karede eşleşiyor. Bu hatalar saklanmadı; örnek arayüzden ve deney kayıtlarından incelenebilir.
 
 Gerçek zamansal oynanış testleri, kamera/ego maskesi ve algıdan frene uçtan uca doğrulama gerekiyor. [Yol haritası](docs/ROADMAP.md) · [Deney kayıtları](experiments/README.md) · [Model kartı](docs/MODEL_CARD.md).
+
+## Lisans
+
+Özgün proje kodu ve belge metinleri [MIT](LICENSE) lisansındadır. Üçüncü taraf yapılandırmalar, veri setleri, sahne görselleri ve model ağırlıkları bu iznin dışındadır; [lisans kapsamına](LICENSING.md) bakın.
