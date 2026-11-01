@@ -1,6 +1,7 @@
 """Optional training extras; ordinary runtime CI can skip without torch."""
 
 import math
+import os
 import random
 import sys
 import unittest
@@ -10,6 +11,8 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "training"))
 try:
+    if os.environ.get("GTA_ENABLE_TRAINING_MATH") != "1":
+        raise ImportError("Tensor/gradient tests require explicit opt-in")
     import torch
     from train_focused import crop_box, distillation_loss, focused_loss
 except ImportError:

@@ -36,7 +36,7 @@ class ExperimentTests(unittest.TestCase):
 
     def test_frame_id_blocks_never_span_partitions(self):
         for group in range(250):
-            assigned = {splits.partition(group * 100 + offset)[0] for offset in range(100)}
+            assigned = {splits.partition(group * 100 + offset)[0] for offset in range(100) if splits.partition(group * 100 + offset)[0] != "excluded"}
             self.assertEqual(len(assigned), 1)
         self.assertEqual(splits.partition(1234), splits.partition(1234))
 

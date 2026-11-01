@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased — 2026-11-01 review follow-up
+
+- Address the external source review with regression tests, explicit scope decisions and a linked follow-up document.
+- Keep original experiment/release provenance and historical repository URLs; no fabricated model gain or rewritten development history.
+- Run ordinary CI for these changes; no training, paid inference or platform credits.
+
+
 ## Decision-pipeline demonstration — 2026-10-15
 
 - Replace the withdrawn box-only GIF with scene overlays showing actual perception, approximate path conflicts and dry-run brake decisions.

@@ -8,6 +8,7 @@ import cv2
 import numpy as np
 from PIL import Image
 
+from .ego import VEHICLE_IDS, polygon_mask
 from .models import ARCHITECTURES, build_model
 
 ACTORS = {
@@ -53,12 +54,17 @@ def validate_metadata(metadata):
         raise ValueError("Invalid checkpoint input dimensions")
 
 
-def components(mask, confidence, minimum_area=16, minimum_confidence=0.65):
+def components(mask, confidence, minimum_area=16, minimum_confidence=0.65, ego_mask=None):
     height, width = mask.shape
     detections = []
     for class_id, label in ACTORS.items():
         count, labels, stats, _centroids = cv2.connectedComponentsWithStats(
-            (mask == class_id).astype(np.uint8), connectivity=8
+            (
+                (mask == class_id) & ~ego_mask
+                if ego_mask is not None and class_id in VEHICLE_IDS
+                else mask == class_id
+            ).astype(np.uint8),
+            connectivity=8,
         )
         for component in range(1, count):
             x, y, box_width, box_height, area = stats[component]
@@ -89,7 +95,9 @@ class PerceptionResult:
 
 
 class SemanticPerception:
-    def __init__(self, checkpoint, device="cuda", mixed_precision=False, input_size=None):
+    def __init__(
+        self, checkpoint, device="cuda", mixed_precision=False, input_size=None, ego_polygon=None
+    ):
         import torch
 
         checkpoint = Path(checkpoint)
@@ -108,6 +116,7 @@ class SemanticPerception:
         self.model.to(self.device).eval()
         self.metadata = metadata
         self.size = input_size or (metadata["width"], metadata["height"])
+        self.ego_mask = polygon_mask(ego_polygon, *self.size) if ego_polygon is not None else None
         self.mean = torch.tensor([0.485, 0.456, 0.406], device=self.device).view(1, 3, 1, 1)
         self.std = torch.tensor([0.229, 0.224, 0.225], device=self.device).view(1, 3, 1, 1)
 
@@ -141,7 +150,7 @@ class SemanticPerception:
         if self.device.type == "cuda":
             torch.cuda.synchronize()
         inference_ms = (time.perf_counter() - inference_started) * 1000
-        found = components(mask_array, confidence_array)
+        found = components(mask_array, confidence_array, ego_mask=self.ego_mask)
         return PerceptionResult(
             mask_array, found, inference_ms, (time.perf_counter() - start) * 1000, captured_at
         )
