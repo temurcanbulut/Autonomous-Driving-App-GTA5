@@ -9,13 +9,16 @@ function stat(value, label) {const el = node('div'); el.className = 'stat'; el.a
 function selected() {
   trace = replay.traces[Number($('#sequence').value)]; index = 0;
   const s = trace.summary;
-  $('#stats').replaceChildren(stat(String(s.frames),'RECORDED FRAMES'), stat(`${s.span_s.toFixed(1)} s`,'FIRST → LAST TIMESTAMP'), stat(s.latency_median_ms === null ? '—' : `${s.latency_median_ms.toFixed(1)} ms`,'MEDIAN RECORDED LATENCY'), stat(String(s.dry_brake_frames),'DRY-RUN BRAKE FRAMES'));
-  $('#input-state').textContent = {emitted:'TRACE REPORTS GAME INPUT',recorded_false:'ALL ROWS RECORD: NO GAME INPUT',not_recorded:'GAME INPUT STATUS NOT FULLY RECORDED'}[s.input_evidence];
+  $('#stats').replaceChildren(stat(String(s.frames),'Recorded frames'), stat(`${s.span_s.toFixed(1)} s`,'Recorded span'), stat(s.latency_median_ms === null ? '—' : `${s.latency_median_ms.toFixed(1)} ms`,'Median recorded latency'), stat(String(s.dry_brake_frames),'Dry-run brake frames'));
+  $('#input-state').textContent = {emitted:'Record reports game input',recorded_false:'No game input in record',not_recorded:'Game input not fully recorded'}[s.input_evidence];
   $('#frame').max = String(trace.frames.length - 1);
   $('#source').textContent = `${trace.name} · ${trace.bytes} input bytes · SHA256 ${trace.sha256}. Diagnostic target matched: ${s.diagnostic_frames ? `${s.diagnostic_matched}/${s.diagnostic_frames} frames` : 'not recorded'}. Latency scope comes from the trace producer; it is not GTA FPS.`;
   const chart = $('#chart'); chart.replaceChildren();
   const values = trace.frames.map(row => row.latency).filter(value => value !== null);
-  const ceiling = Math.max(1, ...values);
+  const ceiling = Math.ceil(Math.max(1, ...values) / 50) * 50;
+  $('#latency-axis-max').textContent = `${ceiling} ms`;
+  $('#latency-axis-mid').textContent = `${ceiling / 2}`;
+  for (const y of [10, 42.5, 75]) chart.append(shape('line',{x1:0,y1:y,x2:960,y2:y,stroke:'#353d42','stroke-width':1}));
   let segment = [];
   const flush = () => {if (segment.length) chart.append(shape('polyline',{points:segment.join(' '),fill:'none',stroke:'#d1ee91','stroke-width':1.5})); segment = [];};
   trace.frames.forEach((row,i) => {
@@ -40,8 +43,8 @@ function draw() {
   const hasNextBrake = trace.frames.slice(index + 1).some(frame => frame.brake === true);
   $('#next-brake').disabled = !hasNextBrake;
   scene.replaceChildren();
-  for (let x=0;x<=960;x+=120) scene.append(shape('line',{x1:x,y1:0,x2:x,y2:540,stroke:'#203137'}));
-  for (let y=0;y<=540;y+=90) scene.append(shape('line',{x1:0,y1:y,x2:960,y2:y,stroke:'#203137'}));
+  for (let x=0;x<=960;x+=120) scene.append(shape('line',{x1:x,y1:0,x2:x,y2:540,stroke:'#293238'}));
+  for (let y=0;y<=540;y+=90) scene.append(shape('line',{x1:0,y1:y,x2:960,y2:y,stroke:'#293238'}));
   scene.append(shape('text',{x:20,y:30,fill:'#83989f'},`FRAME ${index + 1} · ${row.time.toFixed(3)} s`));
   $('#actors').replaceChildren(...row.detections.map(item => {
     const [x,y,w,h] = item.box, color = colors[item.label] || '#bdccd1';

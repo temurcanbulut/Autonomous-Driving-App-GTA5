@@ -7,6 +7,8 @@
 <p align="center">Explore scene perception and driving-assistance decisions in GTA V.<br>Trained models, replay tools and inspectable experiment records.</p>
 <p align="center"><a href="README.tr.md">Türkçe</a> · <a href="#try-it-without-a-gpu">Try the replay desk</a> · <a href="docs/MODEL_CARD.md">Model card</a> · <a href="docs/ROADMAP.md">Roadmap</a></p>
 
+**[Open the replay desk](https://temurcanbulut.github.io/Autonomous-Driving-App-GTA5/):** inspect recorded frames from five diagnostic scenes. No model is executed and no game input is sent.
+
 ![Pedestrian, bicycle and vehicle cut-in: trained perception, path-conflict estimates and dry-run brake requests](docs/images/test-explainer.gif)
 
 **Watch the decision pipeline:** model output → tracked objects → estimated path conflict → dry-run brake request. These are composited validation actors on a static GTA scene, with actual model outputs; no game keys are sent. The hood false alarm and bicycle misses remain visible. [Source records and interpretation](docs/DEMONSTRATION.md).

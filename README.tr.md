@@ -2,6 +2,8 @@
 <p align="center">GTA V sahnelerini algıla. Kayıtları incele. Sürüş desteği kararlarını görünür kıl.</p>
 <p align="center"><a href="README.md">English</a> · <a href="docs/MODEL_CARD.md">Model kartı</a></p>
 
+**[Replay ekranını aç](https://temurcanbulut.github.io/Autonomous-Driving-App-GTA5/):** beş tanılama sahnesinin kayıtlı karelerini inceleyin. Yeni model çalıştırılmaz, oyuna tuş gönderilmez.
+
 ![Yaya, bisiklet ve öne giren araç: eğitilmiş algı, yol çakışması ve kuru fren istekleri](docs/images/test-explainer.gif)
 
 **Kararın nasıl oluştuğunu izle:** model çıktısı → takip edilen nesneler → tahmini yol çakışması → kuru fren isteği. Sabit GTA sahnesine doğrulama aktörleri yerleştirildi; gösterilen algılar gerçek model çıktılarıdır. Oyuna tuş gönderilmez. Kaput kaynaklı yanlış fren ve kaçırılan bisikletler görünür kalır. [Kaynak kayıtları ve açıklama](docs/DEMONSTRATION.md).
