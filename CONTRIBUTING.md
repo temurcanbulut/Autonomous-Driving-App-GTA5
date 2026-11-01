@@ -5,3 +5,9 @@ Open a focused issue describing the observed behavior, expected behavior and min
 Create a branch, install the development dependencies and run the commands in the README. Include a regression test for changed parsing, transport, control or file boundaries. UI changes need desktop and mobile verification; update screenshots/recordings from the actual application. Generated demonstrations must retain their source context.
 
 Record measured results with the inputs and environment used. Keep incomplete checks and failed experiments visible. Passing unit tests does not establish detection accuracy or driving safety. Do not add unrelated dependencies, binary weights or raw training datasets to Git.
+
+## CI and review history
+
+Security fixes must run CI without skip directives. Release tags require green
+checks for the exact commit. Keep changes reviewable and preserve actual history;
+do not backdate commits or manufacture issues, reviews or benchmark gains.

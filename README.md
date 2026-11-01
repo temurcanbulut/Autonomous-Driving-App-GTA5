@@ -3,7 +3,7 @@
   <img src="https://img.shields.io/badge/scene_classes-19-d1ee91" alt="19 semantic classes">
   <a href="https://github.com/temurcanbulut/Autonomous-Driving-App-GTA5/releases/tag/research-2026-10-15"><img src="https://img.shields.io/badge/models-download-8dbeff" alt="Download trained models"></a>
 </p>
-<h1 align="center">GTA Assist Lab</h1>
+<h1 align="center">GTA Perception Lab</h1>
 <p align="center">Explore scene perception and driving-assistance decisions in GTA V.<br>Trained models, replay tools and inspectable experiment records.</p>
 <p align="center"><a href="README.tr.md">Türkçe</a> · <a href="#try-it-without-a-gpu">Try the replay desk</a> · <a href="docs/MODEL_CARD.md">Model card</a> · <a href="docs/ROADMAP.md">Roadmap</a></p>
 
@@ -84,8 +84,10 @@ python -m ruff check .
 python -m unittest discover -s tests -v
 ```
 
-The current local run passes 61 tests with training dependencies available. CI covers Windows/Linux runtime checks and a separate CPU training-math job. [Contributing](CONTRIBUTING.md) · [Security and checkpoint trust](SECURITY.md) · [Changelog](CHANGELOG.md).
+CI covers Windows/Linux runtime and offline geometry checks. Optional tensor/gradient tests require a separate manual dispatch; ordinary pushes do not run training mathematics or inference. [Contributing](CONTRIBUTING.md) · [Security and checkpoint trust](SECURITY.md) · [Changelog](CHANGELOG.md).
 
 ## License
 
 Original project source code and documentation text are licensed under [MIT](LICENSE). Third-party configurations, datasets, scene imagery and model weights are outside that grant; see [licensing scope](LICENSING.md).
+
+[2026-11 source-review follow-up and exact limitations](docs/AUDIT_FOLLOWUP.md).

@@ -1,6 +1,7 @@
 """Replay trained semantic perception without sending any game input."""
 
 import argparse
+import hashlib
 import json
 import time
 from pathlib import Path
@@ -56,6 +57,11 @@ def main():
     )
     cli.add_argument("--no-preview", action="store_true")
     cli.add_argument("--trace", type=Path)
+    cli.add_argument(
+        "--ego-mask",
+        type=Path,
+        help="Explicit camera-calibrated JSON {polygon:[[x,y],...]} (disabled by default)",
+    )
     cli.add_argument("--max-frames", type=int, default=0)
     args = cli.parse_args()
     live = args.source == "screen"
@@ -65,7 +71,11 @@ def main():
         cli.error("max-frames must be nonnegative")
     if args.trace and args.trace.exists():
         cli.error("Trace exists; choose a new file.")
-    perception = SemanticPerception(args.model, args.device, args.amp)
+    ego_bytes = args.ego_mask.read_bytes() if args.ego_mask else None
+    if ego_bytes is not None and len(ego_bytes) > 8192:
+        cli.error("Ego mask configuration is too large")
+    ego_polygon = json.loads(ego_bytes)["polygon"] if ego_bytes else None
+    perception = SemanticPerception(args.model, args.device, args.amp, ego_polygon=ego_polygon)
     tracker = Tracker()
     if args.region and (args.region[2] <= 0 or args.region[3] <= 0):
         cli.error("Region width and height must be positive")
@@ -108,6 +118,7 @@ def main():
             tracks = tracker.update(result.detections, media_time)
             record = dict(
                 frame=count,
+                ego_mask_sha256=hashlib.sha256(ego_bytes).hexdigest() if ego_bytes else None,
                 media_time_s=media_time,
                 timing_assumption="capture_completed_monotonic_clock"
                 if live

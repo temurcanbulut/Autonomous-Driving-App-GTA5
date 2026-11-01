@@ -1,4 +1,4 @@
-<h1 align="center">GTA Assist Lab</h1>
+<h1 align="center">GTA Perception Lab</h1>
 <p align="center">GTA V sahnelerini algıla. Kayıtları incele. Sürüş desteği kararlarını görünür kıl.</p>
 <p align="center"><a href="README.md">English</a> · <a href="docs/MODEL_CARD.md">Model kartı</a></p>
 
@@ -50,3 +50,5 @@ Gerçek zamansal oynanış testleri, kamera/ego maskesi ve algıdan frene uçtan
 ## Lisans
 
 Özgün proje kodu ve belge metinleri [MIT](LICENSE) lisansındadır. Üçüncü taraf yapılandırmalar, veri setleri, sahne görselleri ve model ağırlıkları bu iznin dışındadır; [lisans kapsamına](LICENSING.md) bakın.
+
+[2026-11 source-review follow-up and exact limitations](docs/AUDIT_FOLLOWUP.md).
